@@ -43,3 +43,12 @@ Ten sach: Co gai den tu hom qua
 Ngay muon: 27/11/2025
 ----------------------------------------
 
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 27/11/2025 22:37:10
+ID nguoi dung: 4
+Ten nguoi dung: Chau
+ID sach: 124
+Ten sach: Mat biec
+Ngay muon: 27/11/2025
+----------------------------------------
+

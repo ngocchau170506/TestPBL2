@@ -40,6 +40,7 @@ public:
 
     virtual void Show() const;
     void Update();
+    void UpdateByUser();
     void InputAccountDetails();
 
     friend ostream& operator<<(ostream& out, const Person& p);
@@ -318,6 +319,54 @@ void Person::Update()
     //cin.ignore(100, '\n');
 
     ChangePassword();
+
+    cout << "Ten hien tai: " << name << endl;
+    cout << "Nhap Ten moi: ";
+    input[0] = '\0';
+    cin.getline(input, sizeof(input));
+    if (input[0] != '\0') 
+    {
+        setName(input);
+    }
+
+    cout << "Ngay sinh hien tai: " << date << endl;
+    cout << "Nhap Ngay sinh moi: ";
+    input[0] = '\0';
+    cin.getline(input, sizeof(date));
+    if (input[0] != '\0') 
+    {
+        setDate(input);
+    }
+
+    cout << "SDT hien tai: " << phone << endl;
+    cout << "Nhap So dien thoai moi: ";
+    input[0] = '\0';
+    cin.getline(input, sizeof(phone));
+    if (input[0] != '\0') 
+    {
+        setPhone(input);
+    }
+
+    cout << "Email hien tai: " << email << endl;
+    cout << "Nhap Email moi: ";
+    input[0] = '\0';
+    cin.getline(input, sizeof(email));
+    if (input[0] != '\0') 
+    {
+        setEmail(input);
+    }
+
+    cout << "\nCap nhat thong tin ca nhan thanh cong!\n";
+    Show();
+}
+
+void Person::UpdateByUser() 
+{
+    char input[100];
+
+    cout << "\n--- CAP NHAT THONG TIN CA NHAN ---\n";
+
+    //cin.ignore(100, '\n');
 
     cout << "Ten hien tai: " << name << endl;
     cout << "Nhap Ten moi: ";

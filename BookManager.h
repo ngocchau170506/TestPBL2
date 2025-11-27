@@ -11,6 +11,7 @@ class BookManager
 private:
     Book books[100];
     int bookCount;
+    
     char filePath[100];
     bool IsBookIDExist(int id);
     char userFilePath[100];

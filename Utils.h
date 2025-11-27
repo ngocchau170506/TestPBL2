@@ -18,6 +18,17 @@ public:
     static void ToUpperManual(char* str); 
     static void ToLowerManual(char* str); 
     static const int daysInMonth[13];
+    // Hàm mới: Phân tích cú pháp ngày "dd/mm/yyyy" thành tm
+    static tm ParseDate(const string& dateStr);
+    
+    // Hàm mới: Định dạng tm thành chuỗi "dd/mm/yyyy"
+    static string FormatDate(const tm& timeinfo);
+    
+    // Hàm mới: Cộng số ngày vào một ngày cho trước
+    static tm AddDays(const tm& date, int days);
+    
+    // Hàm mới: So sánh hai ngày (trả về -1 nếu date1 < date2, 0 nếu bằng, 1 nếu date1 > date2)
+    static int CompareDates(const tm& date1, const tm& date2);
 
     static bool IsLeap(int year)
     {
@@ -298,4 +309,43 @@ int Utils::StringToIntManual(const char* str)
         str++;
     }
     return res * sign;
+}
+
+tm Utils::ParseDate(const string& dateStr) {
+    tm timeinfo = {};
+    // Cố gắng phân tích cú pháp dd/mm/yyyy
+    // Lưu ý: strptime không chuẩn trên Windows MSVC, có thể cần thay thế
+    // Nếu bạn đang dùng Visual Studio, cần dùng sscanf_s hoặc parse thủ công
+    #ifdef _WIN32
+        int d, m, y;
+        sscanf_s(dateStr.c_str(), "%d/%d/%d", &d, &m, &y);
+        timeinfo.tm_mday = d;
+        timeinfo.tm_mon = m - 1; // tm_mon is 0-11
+        timeinfo.tm_year = y - 1900; // tm_year is years since 1900
+    #else
+        strptime(dateStr.c_str(), "%d/%m/%Y", &timeinfo);
+    #endif
+    mktime(&timeinfo); // Chuẩn hóa tm struct (ví dụ: đặt tm_wday, tm_yday)
+    return timeinfo;
+}
+
+string Utils::FormatDate(const tm& timeinfo) {
+    char buffer[11]; // dd/mm/yyyy\0
+    strftime(buffer, sizeof(buffer), "%d/%m/%Y", &timeinfo);
+    return std::string(buffer);
+}
+
+tm Utils::AddDays(const tm& date, int days) {
+    tm newDate = date;
+    newDate.tm_mday += days;
+    mktime(&newDate); // Chuẩn hóa lại sau khi thêm ngày
+    return newDate;
+}
+
+int Utils::CompareDates(const tm& date1, const tm& date2) {
+    time_t t1 = mktime(const_cast<tm*>(&date1));
+    time_t t2 = mktime(const_cast<tm*>(&date2));
+    if (t1 < t2) return -1;
+    if (t1 > t2) return 1;
+    return 0; // Equal
 }

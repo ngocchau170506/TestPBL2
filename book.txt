@@ -1,4 +1,4 @@
-124,Mat biec,Nguyen Nhat Anh,truyen,1990,8,0
+124,Mat biec,Nguyen Nhat Anh,truyen,1990,7,0
 125,Toi thay hoa vang tren co xanh,Nguyen Nhat Anh,truyen,2010,4,0
 126,Co gai den tu hom qua,Nguyen Nhat Anh,truyen,1989,0,0
 127,Ngoi khoc tren cay,Nguyen Nhat Anh,truyen,2013,1,0
@@ -11,5 +11,5 @@
 134,So do,Vu Trong Phung,tieu thuyet,1936,1,0
 135,De men phieu luu ky,To Hoai,truyen thieu nhi,1941,1,0
 136,Hai dua tre,Thach Lam,truyen ngan,1938,1,0
-137,Tuong tu,The Lu,tho,1937,3,0
 138,Mua lac,Duong Thu Huong,tieu thuyet,1992,2,0
+139,Nhat ky cua Chau,Chau,Nhat ky,1975,4,0

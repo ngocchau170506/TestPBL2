@@ -441,7 +441,7 @@ void UserManager::UpdateByID(int id)
         {
             if (users[i].getID() == id)
             {
-                users[i].Update();
+                users[i].UpdateByUser();
                 SaveUsersToFile();
                 found = true;
                 break;

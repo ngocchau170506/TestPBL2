@@ -276,40 +276,101 @@ void User::LoadUserByID(const string &id)
 // }
 // Trong file User.cpp
 
+// void User::ShowBorrowedBooks(BookManager& bookManager)
+// {
+//     cout << "\n--- DANH SACH SACH DANG MUON CUA: " << this->getName() << " ---\n";
+
+//     if (currentBorrowedCount == 0) 
+//     {
+//         cout << "Hien tai nguoi dung nay khong muon cuon sach nao.\n";
+//         return;
+//     }
+
+//     cout << left << setw(10) << "ID Sach" 
+//          << left << setw(40) << "Ten Sach" 
+//          << left << setw(20) << "Ngay muon" << endl;
+//     cout << setfill('-') << setw(70) << "-" << setfill(' ') << endl;
+
+//     for (int i = 0; i < currentBorrowedCount; i++)
+//     {
+//         int bookID = borrowedBooks[i].getBookID(); 
+//         string borrowDate = borrowedBooks[i].getBorrowDate();
+//         Book* book = bookManager.GetBookByID(bookID);
+
+//         cout << left << setw(10) << bookID;
+
+//         if (book) {
+//             cout << left << setw(40) << book->getTitle();
+//             cout << left << setw(20) << borrowDate; 
+//         }
+//         else {
+//             cout << left << setw(40) << "Sach da bi xoa khoi he thong";
+//             cout << left << setw(20) << borrowDate;
+//         }
+//         cout << endl;
+//     }
+//     cout << setfill('-') << setw(70) << "-" << setfill(' ') << endl;
+// }
+
 void User::ShowBorrowedBooks(BookManager& bookManager)
 {
+    // LƯU Ý: Hàm này CHỈ HIỂN THỊ CÁC SÁCH ĐANG MƯỢN (từ mảng borrowedBooks).
+    // Để hiển thị trạng thái "Đã trả", cần có một cấu trúc dữ liệu riêng
+    // để lưu trữ lịch sử giao dịch mượn/trả đầy đủ của người dùng.
     cout << "\n--- DANH SACH SACH DANG MUON CUA: " << this->getName() << " ---\n";
 
-    if (currentBorrowedCount == 0) 
+    if (currentBorrowedCount == 0)
     {
         cout << "Hien tai nguoi dung nay khong muon cuon sach nao.\n";
         return;
     }
 
-    cout << left << setw(10) << "ID Sach" 
-         << left << setw(40) << "Ten Sach" 
-         << left << setw(20) << "Ngay muon" << endl;
-    cout << setfill('-') << setw(70) << "-" << setfill(' ') << endl;
+    // Định nghĩa thời gian mượn tối đa (ví dụ: 14 ngày)
+    const int DEFAULT_BORROW_DAYS = 14; 
+
+    // Lấy ngày hiện tại
+    char currentDateBuffer[20];
+    Utils::GetCurrentDate(currentDateBuffer, sizeof(currentDateBuffer));
+    tm current_tm = Utils::ParseDate(currentDateBuffer);
+
+    // Cập nhật độ rộng cột
+    cout << left << setw(10) << "ID Sach"
+         << left << setw(40) << "Ten Sach"
+         << left << setw(15) << "Ngay muon"
+         << left << setw(15) << "Han tra"      // Cột mới
+         << left << setw(15) << "Trang thai"   // Cột mới
+         << endl;
+    cout << setfill('-') << setw(95) << "-" << setfill(' ') << endl; // Tổng độ rộng các cột
 
     for (int i = 0; i < currentBorrowedCount; i++)
     {
-        int bookID = borrowedBooks[i].getBookID(); 
-        string borrowDate = borrowedBooks[i].getBorrowDate();
+        int bookID = borrowedBooks[i].getBookID();
+        string borrowDateStr = borrowedBooks[i].getBorrowDate();
         Book* book = bookManager.GetBookByID(bookID);
 
         cout << left << setw(10) << bookID;
 
-        if (book) {
-            cout << left << setw(40) << book->getTitle();
-            cout << left << setw(20) << borrowDate; 
+        // Lấy tên sách
+        string bookTitle = (book) ? book->getTitle() : "Sach da bi xoa khoi he thong";
+        cout << left << setw(40) << bookTitle;
+        cout << left << setw(15) << borrowDateStr;
+
+        // Tính toán và hiển thị hạn trả
+        tm borrow_tm = Utils::ParseDate(borrowDateStr);
+        tm dueDate_tm = Utils::AddDays(borrow_tm, DEFAULT_BORROW_DAYS);
+        string dueDateStr = Utils::FormatDate(dueDate_tm);
+        cout << left << setw(15) << dueDateStr;
+
+        // Xác định và hiển thị trạng thái
+        string status = "Dang muon";
+        if (Utils::CompareDates(current_tm, dueDate_tm) > 0) { // Nếu ngày hiện tại > hạn trả
+            status = "QUA HAN";
         }
-        else {
-            cout << left << setw(40) << "Sach da bi xoa khoi he thong";
-            cout << left << setw(20) << borrowDate;
-        }
+        cout << left << setw(15) << status;
+
         cout << endl;
     }
-    cout << setfill('-') << setw(70) << "-" << setfill(' ') << endl;
+    cout << setfill('-') << setw(95) << "-" << setfill(' ') << endl;
 }
 
 void User::Show() const
@@ -332,6 +393,7 @@ void User::Menu(UserManager &manager, BookManager &bm)
         cout << "3. Xem danh sach sach da muon\n";
         cout << "4. Xem thong tin ca nhan\n";
         cout << "5. Thay doi thong tin ca nhan\n";
+        cout << "6. Doi mat khau\n";
         cout << "0. Dang xuat\n";
         cout << "Chon: ";
 
@@ -433,6 +495,10 @@ void User::Menu(UserManager &manager, BookManager &bm)
             AskReturnToMenu();
             break;
         }
+        case 6:
+            ChangePassword();
+            AskReturnToMenu();
+            break;  
         case 0:
             cout << "Dang xuat thanh cong. Tam biet!\n";
             break;
