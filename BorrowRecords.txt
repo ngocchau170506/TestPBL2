@@ -1,0 +1,45 @@
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 26/11/2025 12:22:47
+ID nguoi dung: 12
+Ten nguoi dung: Nguyen Thi Ngoc Chau
+ID sach: 132
+Ten sach: Cho xin mot ve di tuoi tho
+Ngay muon: 2025-11-26
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 26/11/2025 12:47:08
+ID nguoi dung: 12
+Ten nguoi dung: Nguyen Thi Ngoc Chau
+ID sach: 138
+Ten sach: Mua lac
+Ngay muon: 26/11/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 27/11/2025 12:12:46
+ID nguoi dung: 12
+Ten nguoi dung: Nguyen Thi Ngoc Chau
+ID sach: 124
+Ten sach: Mat biec
+Ngay muon: 27/11/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 27/11/2025 12:13:09
+ID nguoi dung: 12
+Ten nguoi dung: Nguyen Thi Ngoc Chau
+ID sach: 125
+Ten sach: Toi thay hoa vang tren co xanh
+Ngay muon: 27/11/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 27/11/2025 12:13:24
+ID nguoi dung: 12
+Ten nguoi dung: Nguyen Thi Ngoc Chau
+ID sach: 126
+Ten sach: Co gai den tu hom qua
+Ngay muon: 27/11/2025
+----------------------------------------
+
