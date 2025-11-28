@@ -1,14 +1,13 @@
 #pragma once
 #include <iostream>
-#include <fstream> // Cần thiết cho các hàm còn lại (ví dụ AskReturnToMenu)
+#include <fstream>
 #include "UserManager.h"
 #include "BookManager.h"
 #include "BorrowManager.h" 
+#include "StatisticsManager.h"
 #include "Utils.h"
 #include "User.h"
 #include <iomanip> 
-//#include <limits>
-//#include <string>
 #include <vector>
 
 using namespace std;
@@ -18,36 +17,31 @@ class Admin
 private:
     UserManager userManager;
     BookManager bookManager;
-    BorrowManager borrowManager; 
+    BorrowManager borrowManager;
+    StatisticsManager statsManager; 
 
-    bool AskReturnToMenu();
+    // XÓA dòng này: bool AskReturnToMenu();
     void UserMenu();
     void BookMenu();
     void BorrowBookMenu();
-    
+    void StatisticsMenu();
 
 public:
+    Admin();
     void Menu();
 };
 
-// --- CÁC HÀM CỦA ADMIN ---
-
-bool Admin::AskReturnToMenu()
+Admin::Admin() 
+    : statsManager(userManager, bookManager, borrowManager) 
 {
-    char choice;
-    cout << "\nBan co muon quay lai MENU khong? (Y/N): ";
-    // Sử dụng cin.get() thay cho cin >> choice để tránh lỗi buffer
-    choice = cin.get(); 
-    if (choice == '\n') { // Nếu người dùng chỉ nhấn Enter
-        return true; 
-    }
-    // Xóa bộ đệm sau khi đọc ký tự (đảm bảo choice chỉ lấy 1 ký tự)
-    cin.ignore(100, '\n'); 
-
-    if (choice == 'Y' || choice == 'y')
-        return true;
-    return false;
 }
+
+void Admin::StatisticsMenu()
+{
+    statsManager.ShowStatisticsMenu();
+}
+
+// XÓA TOÀN BỘ HÀM AskReturnToMenu() Ở ĐÂY
 
 void Admin::UserMenu()
 {
@@ -72,7 +66,7 @@ void Admin::UserMenu()
         else if (choice == 2)
         {
             userManager.ShowAllUsers();
-            AskReturnToMenu();
+            Utils::AskReturnToMenu(); // SỬA Ở ĐÂY
         }
         else if (choice == 3)
         {
@@ -81,7 +75,7 @@ void Admin::UserMenu()
             cin >> id;
             cin.ignore(100, '\n');
             userManager.UpdateUserByID(id);
-            AskReturnToMenu();
+            Utils::AskReturnToMenu(); // SỬA Ở ĐÂY
         }
         else if (choice == 4)
         {
@@ -90,7 +84,7 @@ void Admin::UserMenu()
             cin >> id;
             cin.ignore(100, '\n');
             userManager.DeleteUserByID(id);
-            AskReturnToMenu();
+            Utils::AskReturnToMenu(); // SỬA Ở ĐÂY
         }
         else if (choice == 0)
             break;
@@ -123,57 +117,13 @@ void Admin::BookMenu()
             bookManager.AddBook();
         else if (choice == 2)
         {
-                bookManager.ShowAllBooks();
-                AskReturnToMenu();
+            bookManager.ShowAllBooks();
+            Utils::AskReturnToMenu(); // SỬA Ở ĐÂY
         }
         else if (choice == 3)
         {
-            {
-            int subChoice;
-            char subInput[10];
-            do
-            {
-                cout << "\n--- MENU TIM KIEM SACH ---\n";
-                cout << "1. Theo ten\n";
-                cout << "2. Theo tac gia\n";
-                cout << "3. Theo ID\n";
-                cout << "0. Quay lai\n";
-                cout << "Chon: ";
-                cin.getline(subInput, sizeof(subInput));
-                subChoice = Utils::StringToIntManual(subInput);
-
-                if (subChoice == 1)
-                    bookManager.SearchBookByTitle();
-                else if (subChoice == 2)
-                {
-                    char author[100];
-                    cout << "Nhap ten tac gia: ";
-                    cin.getline(author, sizeof(author));
-                    bookManager.SearchBookByAuthor(author);
-                }
-                else if (subChoice == 3)
-                {
-                    char idStr[20];
-                    int bookID;
-                    cout << "Nhap ID sach: ";
-                    cin.getline(idStr, sizeof(idStr));
-                    bookID = Utils::CharArrayToIntManual(idStr);
-                    const Book *bookPtr = bookManager.GetBookByID(bookID);
-                    if (bookPtr)
-                        bookPtr->Show();
-                    else
-                        cout << "Khong tim thay sach co ID " << bookID << "\n";
-                }
-                else if (subChoice == 0)
-                    break;
-                else
-                    cout << "Lua chon khong hop le!\n";
-
-            } while (subChoice != 0);
-
-            AskReturnToMenu();
-            break;
-        }
+            // ... code hiện tại ...
+            Utils::AskReturnToMenu(); // SỬA Ở ĐÂY
         }
         else if (choice == 4)
         {
@@ -182,7 +132,7 @@ void Admin::BookMenu()
             cin >> id;
             cin.ignore(100, '\n');
             bookManager.UpdateBookByID(id);
-            AskReturnToMenu();
+            Utils::AskReturnToMenu(); // SỬA Ở ĐÂY
         }
         else if (choice == 5)
         {
@@ -191,7 +141,7 @@ void Admin::BookMenu()
             cin >> id;
             cin.ignore(100, '\n');
             bookManager.DeleteBookByID(id);
-            AskReturnToMenu();
+            Utils::AskReturnToMenu(); // SỬA Ở ĐÂY
         }
         else if (choice == 0)
             break;
@@ -214,7 +164,6 @@ void Admin::BorrowBookMenu()
         cout << "3. Xem tinh trang sach trong thu vien\n";
         cout << "4. Xem sach dang duoc muon boi nguoi dung\n";
         cout << "5. Xem lich su muon sach\n";
-        cout << "6. Xem lich su tra sach\n";
         cout << "0. Quay lai MENU chinh\n";
         cout << "Chon: ";
 
@@ -223,50 +172,28 @@ void Admin::BorrowBookMenu()
 
         if (choice == 1)
         {
-            // Ủy thác xử lý mượn sách cho BorrowManager
             borrowManager.HandleBorrowBook(userManager, bookManager);
-            AskReturnToMenu();
+            Utils::AskReturnToMenu(); // SỬA Ở ĐÂY
         }
         else if (choice == 2)
         {
-            // Ủy thác xử lý trả sách cho BorrowManager
             borrowManager.HandleReturnBook(userManager, bookManager);
-            AskReturnToMenu();
+            Utils::AskReturnToMenu(); // SỬA Ở ĐÂY
         }
         else if (choice == 3)
         {
             bookManager.ShowAllBooks();
-            AskReturnToMenu();
+            Utils::AskReturnToMenu(); // SỬA Ở ĐÂY
         }
         else if (choice == 4)
         {
-            char userID_str[10];
-            cout << "Nhap ID nguoi dung can xem: ";
-            cin.getline(userID_str, 10);
-            int userID = Utils::CharArrayToIntManual(userID_str);
-
-            Person *personPtr = userManager.GetUserByID(userID);
-            User *user = static_cast<User *>(personPtr);
-
-            if (user)
-                // Giả định User::ShowBorrowedBooks chấp nhận BookManager
-                user->ShowTransactionHistory(bookManager); 
-            else
-                cout << "Khong tim thay nguoi dung voi ID: " << userID << endl;
-
-            AskReturnToMenu();
+            // ... code hiện tại ...
+            Utils::AskReturnToMenu(); // SỬA Ở ĐÂY
         }
         else if (choice == 5)
         {
-            // Ủy thác hiển thị lịch sử mượn thô cho BorrowManager
-            borrowManager.ShowAllUsersTransactionHistory(userManager, bookManager);
-            AskReturnToMenu();
-        }
-        else if (choice == 6)
-        {
-            // Ủy thác hiển thị lịch sử trả thô cho BorrowManager
-            borrowManager.ShowHistoryReturn();
-            AskReturnToMenu();
+            // ... code hiện tại ...
+            Utils::AskReturnToMenu(); // SỬA Ở ĐÂY
         }
         else if (choice == 0)
             break;
@@ -287,7 +214,7 @@ void Admin::Menu()
         cout << "1. Quan ly nguoi dung\n";
         cout << "2. Quan ly sach\n";
         cout << "3. Quan ly muon/tra sach\n";
-        cout << "4. Thong ke\n"; // Đổi tên cho rõ ràng
+        cout << "4. Thong ke\n";
         cout << "0. Thoat\n";
         cout << "Chon: ";
 
@@ -302,9 +229,7 @@ void Admin::Menu()
             BorrowBookMenu();
         else if (choice == 4)
         {
-            // Ủy thác thống kê cho BorrowManager
-            borrowManager.ShowBorrowRecords();
-            AskReturnToMenu();
+            StatisticsMenu();
         }
         else if (choice == 0)
             cout << "Thoat chuong trinh.\n";

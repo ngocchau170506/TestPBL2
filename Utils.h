@@ -4,7 +4,6 @@
 class Utils
 {
 public:
-    bool AskReturnToMenu();
     static int StringToIntManual(const char* str);
     static int FindSubstringManual(const char* haystack, const char* needle);
     static void CopyStringManual(char* dest, const char* src, size_t dest_size);
@@ -18,6 +17,7 @@ public:
     static void ToUpperManual(char* str); 
     static void ToLowerManual(char* str); 
     static const int daysInMonth[13];
+    static bool AskReturnToMenu();
     // Hàm mới: Phân tích cú pháp ngày "dd/mm/yyyy" thành tm
     static tm ParseDate(const string& dateStr);
     
@@ -70,6 +70,18 @@ public:
         return totalDays;
     }
 };
+bool Utils::AskReturnToMenu()
+{
+    char choice;
+    cout << "\nBan co muon quay lai MENU khong? (Y/N): ";
+    choice = cin.get(); 
+    if (choice == '\n') {
+        return true; 
+    }
+    cin.ignore(100, '\n'); 
+
+    return (choice == 'Y' || choice == 'y');
+}
 bool Utils::AskReturnToMenu()
 {
     char choice;
