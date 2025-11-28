@@ -70,3 +70,12 @@ Ten sach: Mat biec
 Ngay muon: 28/11/2025
 ----------------------------------------
 
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 28/11/2025 11:59:58
+ID nguoi dung: 4
+Ten nguoi dung: CHauuu
+ID sach: 124
+Ten sach: Mat biec
+Ngay muon: 28/11/2025
+----------------------------------------
+

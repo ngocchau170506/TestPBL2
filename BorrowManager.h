@@ -53,8 +53,193 @@ public:
         ShowRawBorrowHistory("ReturnRecords.txt", "THONG KE DANH SACH TRA SACH (RAW)");
     }
     void ShowAllUsersTransactionHistory(UserManager& userManager, BookManager& bookManager);
+    void ShowActiveAndOverdueBorrows(UserManager& userManager, BookManager& bookManager);
     
 };
+// void BorrowManager::ShowActiveAndOverdueBorrows(UserManager& userManager, BookManager& bookManager) {
+//     cout << "\n=== SACH MUON QUA HAN ===\n";
+
+//     const Person* allUsers = userManager.GetAllUsers();
+//     int userCount = userManager.GetUserCount();
+    
+//     if (userCount == 0) {
+//         cout << "Khong co doc gia nao trong he thong.\n";
+//         return;
+//     }
+
+//     const int DEFAULT_BORROW_DAYS = 14;
+//     char currentDateBuffer[20];
+//     Utils::GetCurrentDate(currentDateBuffer, sizeof(currentDateBuffer));
+//     tm current_tm = Utils::ParseDate(currentDateBuffer);
+
+//     int overdueCount = 0;
+
+//     cout << left << setw(10) << "ID User"
+//          << left << setw(20) << "Ten User"
+//          << left << setw(10) << "ID Sach"
+//          << left << setw(35) << "Ten Sach"
+//          << left << setw(12) << "Ngay muon"
+//          << left << setw(12) << "Han tra"
+//          << left << setw(10) << "So ngay tre"
+//          << endl;
+//     cout << setfill('-') << setw(109) << "-" << setfill(' ') << endl;
+
+//     for (int i = 0; i < userCount; i++) {
+//         const Person& person = allUsers[i];
+        
+//         User user;
+//         user.LoadUserByID(to_string(person.getID()));
+        
+//         const vector<BorrowedItem>& history = user.getTransactionHistory();
+        
+//         for (const auto& item : history) {
+//             // Chỉ hiển thị sách chưa trả và quá hạn
+//             if (item.getIsReturned()) {
+//                 continue;
+//             }
+
+//             int bookID = item.getBookID();
+//             string borrowDateStr = item.getBorrowDate();
+//             Book* book = bookManager.GetBookByID(bookID);
+
+//             // Tính toán hạn trả
+//             tm borrow_tm = Utils::ParseDate(borrowDateStr);
+//             tm dueDate_tm = Utils::AddDays(borrow_tm, DEFAULT_BORROW_DAYS);
+//             string dueDateStr = Utils::FormatDate(dueDate_tm);
+            
+//             // Kiểm tra quá hạn
+//             if (Utils::CompareDates(current_tm, dueDate_tm) > 0) {
+//                 // Tính số ngày trễ
+//                 int daysOverdue = Utils::CompareDates(current_tm, dueDate_tm);
+                
+//                 cout << left << setw(10) << person.getID()
+//                      << left << setw(20) << person.getName()
+//                      << left << setw(10) << bookID;
+
+//                 string bookTitle = (book) ? book->getTitle() : "Sach da bi xoa";
+//                 if (bookTitle.length() > 34) {
+//                     bookTitle = bookTitle.substr(0, 31) + "...";
+//                 }
+//                 cout << left << setw(35) << bookTitle;
+                
+//                 cout << left << setw(12) << borrowDateStr;
+//                 cout << left << setw(12) << dueDateStr;
+//                 cout << left << setw(10) << daysOverdue;
+//                 cout << endl;
+
+//                 overdueCount++;
+//             }
+//         }
+//     }
+
+//     if (overdueCount == 0) {
+//         cout << "Khong co sach nao qua han.\n";
+//     }
+
+//     cout << setfill('-') << setw(109) << "-" << setfill(' ') << endl;
+//     cout << "Tong so sach qua han: " << overdueCount << "\n";
+// }
+void BorrowManager::ShowActiveAndOverdueBorrows(UserManager& userManager, BookManager& bookManager) {
+    cout << "\n=== SACH DANG MUON & QUA HAN ===\n";
+
+    const Person* allUsers = userManager.GetAllUsers();
+    int userCount = userManager.GetUserCount();
+    
+    if (userCount == 0) {
+        cout << "Khong co doc gia nao trong he thong.\n";
+        return;
+    }
+
+    const int DEFAULT_BORROW_DAYS = 14;
+    char currentDateBuffer[20];
+    Utils::GetCurrentDate(currentDateBuffer, sizeof(currentDateBuffer));
+    tm current_tm = Utils::ParseDate(currentDateBuffer);
+
+    int activeBorrows = 0;
+    int overdueBorrows = 0;
+    int totalDisplayed = 0;
+
+    cout << left << setw(8) << "ID Muon"
+         << left << setw(10) << "ID User"
+         << left << setw(20) << "Ten User"
+         << left << setw(10) << "ID Sach"
+         << left << setw(35) << "Ten Sach"
+         << left << setw(12) << "Ngay muon"
+         << left << setw(12) << "Han tra"
+         << left << setw(15) << "Trang thai"
+         << endl;
+    cout << setfill('-') << setw(112) << "-" << setfill(' ') << endl;
+
+    int displayID = 1;
+
+    for (int i = 0; i < userCount; i++) {
+        const Person& person = allUsers[i];
+        
+        User user;
+        user.LoadUserByID(to_string(person.getID()));
+        
+        const vector<BorrowedItem>& history = user.getTransactionHistory();
+        
+        if (history.empty()) {
+            continue;
+        }
+
+        for (const auto& item : history) {
+            // CHỈ HIỂN THỊ SÁCH CHƯA TRẢ
+            if (item.getIsReturned()) {
+                continue; // Bỏ qua sách đã trả
+            }
+
+            int bookID = item.getBookID();
+            string borrowDateStr = item.getBorrowDate();
+            Book* book = bookManager.GetBookByID(bookID);
+
+            // Tính toán hạn trả và kiểm tra quá hạn
+            tm borrow_tm = Utils::ParseDate(borrowDateStr);
+            tm dueDate_tm = Utils::AddDays(borrow_tm, DEFAULT_BORROW_DAYS);
+            string dueDateStr = Utils::FormatDate(dueDate_tm);
+            
+            bool isOverdue = Utils::CompareDates(current_tm, dueDate_tm) > 0;
+            string status = isOverdue ? "QUA HAN" : "Dang muon";
+
+            // Hiển thị thông tin
+            cout << left << setw(8) << displayID++;
+
+            cout << left << setw(10) << person.getID()
+                 << left << setw(20) << person.getName();
+
+            cout << left << setw(10) << bookID;
+
+            string bookTitle = (book) ? book->getTitle() : "Sach da bi xoa";
+            if (bookTitle.length() > 34) {
+                bookTitle = bookTitle.substr(0, 31) + "...";
+            }
+            cout << left << setw(35) << bookTitle;
+            
+            cout << left << setw(12) << borrowDateStr;
+            cout << left << setw(12) << dueDateStr;
+            cout << left << setw(15) << status;
+            cout << endl;
+
+            // Thống kê
+            activeBorrows++;
+            if (isOverdue) {
+                overdueBorrows++;
+            }
+            totalDisplayed++;
+        }
+    }
+
+    if (totalDisplayed == 0) {
+        cout << "Khong co sach nao dang duoc muon hoac qua han.\n";
+    }
+
+    cout << setfill('-') << setw(112) << "-" << setfill(' ') << endl;
+
+    cout << "\n=== TONG QUAN ===\n";
+    cout << "So sach dang muon: " << activeBorrows << "\n";
+    cout << "So sach qua han: " << overdueBorrows << "\n";
+}
 
 void BorrowManager::ShowAllUsersTransactionHistory(UserManager& userManager, BookManager& bookManager) {
     cout << "\n=== LICH SU GIAO DICH CUA TAT CA DOC GIA ===\n";

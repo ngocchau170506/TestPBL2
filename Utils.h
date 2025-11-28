@@ -82,16 +82,6 @@ bool Utils::AskReturnToMenu()
 
     return (choice == 'Y' || choice == 'y');
 }
-bool Utils::AskReturnToMenu()
-{
-    char choice;
-    cout << "\nBan co muon quay lai MENU khong? (Y/N): ";
-    cin >> choice;
-    cin.ignore(100, '\n');
-    if (choice == 'Y' || choice == 'y')
-        return true;
-    return false;
-}
 
 void Utils::ToUpperManual(char* str)
 {

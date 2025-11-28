@@ -25,3 +25,12 @@ Ten sach: Ngoi khoc tren cay
 Ngay tra: 28/11/2025
 ----------------------------------------
 
+=== THONG TIN TRA SACH ===
+Thoi gian ghi nhan: 28/11/2025 12:00:13
+ID nguoi dung: 4
+Ten nguoi dung: CHauuu
+ID sach: 124
+Ten sach: Mat biec
+Ngay tra: 28/11/2025
+----------------------------------------
+
