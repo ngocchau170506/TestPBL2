@@ -2,46 +2,39 @@
 #include <string>
 #include <cstring>
 #include <iostream>
-
 using namespace std;
 
 class BorrowedItem
 {
 private:
     int bookID;
-    char borrowDate[20];
+    string borrowDate;
+    string returnDate;
+    bool isReturned;
 
 public:
-    char dateBorrowed[11];
-    char dateDue[11];
+    BorrowedItem()
+        : bookID(0), borrowDate(""), returnDate(""), isReturned(false) {}
 
-    BorrowedItem() : bookID(0)
-    {
-        strcpy(borrowDate, "");
+    BorrowedItem(int id, const string& bDate)
+        : bookID(id), borrowDate(bDate), returnDate(""), isReturned(false) {}
+
+    BorrowedItem(int id, const string& bDate, const string& rDate, bool returned)
+        : bookID(id), borrowDate(bDate), returnDate(rDate), isReturned(returned) {}
+
+    // FIXED: Trả về string thay vì const char*
+    int getBookID() const { return bookID; }
+    string getBorrowDate() const { return borrowDate; }
+    string getReturnDate() const { return returnDate; }
+    bool getIsReturned() const { return isReturned; }
+
+    void setBookID(int id) { this->bookID = id; }
+    void setBorrowDate(const char* date) { this->borrowDate = date; }
+    void setReturnDate(const char* date) { this->returnDate = date; }
+    void setIsReturned(bool returned) { this->isReturned = returned; }
+
+    void MarkAsReturned(const char* date) {
+        setReturnDate(date);
+        setIsReturned(true);
     }
-
-    // Getter cho BookID
-    int getBookID() const
-    {
-        return bookID;
-    }
-
-    // Setter cho BookID
-    void setBookID(int id)
-    {
-        bookID = id;
-    }
-
-
-    const char *getBorrowDate() const
-    {
-        return borrowDate;
-    }
-
-    void setBorrowDate(const char date[])
-    {
-        strncpy(borrowDate, date, 19);
-        borrowDate[19] = '\0'; 
-    }
-
 };

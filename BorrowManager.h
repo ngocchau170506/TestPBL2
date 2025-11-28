@@ -42,12 +42,12 @@ private:
     void LogReturnRecord(int userID, const string &userName,
                          int bookID, const string &bookTitle,
                          const string &returnDate);
-
+    
 public:
     // Chuyển các hàm xử lý giao dịch từ Admin
     void HandleBorrowBook(UserManager& um, BookManager& bm);
     void HandleReturnBook(UserManager& um, BookManager& bm);
-
+        
     // Chuyển các hàm thống kê/báo cáo từ Admin
     void ShowBorrowRecords();
     void ShowRawBorrowHistory(const string& filename, const string& title);
@@ -59,8 +59,232 @@ public:
     void ShowHistoryReturn() {
         ShowRawBorrowHistory("ReturnRecords.txt", "THONG KE DANH SACH TRA SACH (RAW)");
     }
+    void ShowAllUsersTransactionHistory(UserManager& userManager, BookManager& bookManager);
+    
 };
+void BorrowManager::ShowAllUsersTransactionHistory(UserManager& userManager, BookManager& bookManager) {
+    cout << "\n=== LICH SU GIAO DICH CUA TAT CA DOC GIA ===\n";
 
+    // Lấy thông tin users từ UserManager
+    const Person* allUsers = userManager.GetAllUsers();
+    int userCount = userManager.GetUserCount();
+    
+    if (userCount == 0) {
+        cout << "Khong co doc gia nao trong he thong.\n";
+        return;
+    }
+
+    const int DEFAULT_BORROW_DAYS = 14;
+    char currentDateBuffer[20];
+    Utils::GetCurrentDate(currentDateBuffer, sizeof(currentDateBuffer));
+    tm current_tm = Utils::ParseDate(currentDateBuffer);
+
+    int totalTransactions = 0;
+    int activeBorrows = 0;
+    int overdueBorrows = 0;
+
+    // Header cho bảng
+    cout << left << setw(8) << "ID Muon"
+         << left << setw(10) << "ID User"
+         << left << setw(20) << "Ten User"
+         << left << setw(10) << "ID Sach"
+         << left << setw(35) << "Ten Sach"
+         << left << setw(12) << "Ngay muon"
+         << left << setw(12) << "Ngay tra"
+         << left << setw(12) << "Han tra"
+         << left << setw(15) << "Trang thai"
+         << endl;
+    cout << setfill('-') << setw(135) << "-" << setfill(' ') << endl;
+
+    int borrowID = 1; // ID mượn tự tăng
+
+    for (int i = 0; i < userCount; i++) {
+        const Person& person = allUsers[i];
+        
+        // Tạo User object và tải transaction history
+        User user;
+        user.LoadUserByID(to_string(person.getID()));
+        
+        // Giả sử User có getter cho transactionHistory
+        const vector<BorrowedItem>& history = user.getTransactionHistory();
+        
+        if (history.empty()) {
+            continue; // Bỏ qua user không có giao dịch
+        }
+
+        // Duyệt qua lịch sử của user hiện tại
+        for (const auto& item : history) {
+            int bookID = item.getBookID();
+            string borrowDateStr = item.getBorrowDate();
+            string returnDateStr = item.getReturnDate();
+            Book* book = bookManager.GetBookByID(bookID);
+
+            // Cột ID mượn
+            cout << left << setw(8) << borrowID++;
+
+            // Thông tin user
+            cout << left << setw(10) << person.getID()
+                 << left << setw(20) << person.getName();
+
+            // Thông tin sách
+            cout << left << setw(10) << bookID;
+
+            string bookTitle = (book) ? book->getTitle() : "Sach da bi xoa";
+            if (bookTitle.length() > 34) {
+                bookTitle = bookTitle.substr(0, 31) + "...";
+            }
+            cout << left << setw(35) << bookTitle;
+            
+            // Ngày mượn, ngày trả
+            cout << left << setw(12) << borrowDateStr;
+            cout << left << setw(12) << (item.getIsReturned() ? returnDateStr : "--");
+
+            // Tính toán hạn trả
+            tm borrow_tm = Utils::ParseDate(borrowDateStr);
+            tm dueDate_tm = Utils::AddDays(borrow_tm, DEFAULT_BORROW_DAYS);
+            string dueDateStr = Utils::FormatDate(dueDate_tm);
+            cout << left << setw(12) << dueDateStr;
+
+            // Xác định trạng thái
+            string status;
+            if (item.getIsReturned()) {
+                status = "Da tra";
+                tm return_tm = Utils::ParseDate(returnDateStr);
+                if (Utils::CompareDates(return_tm, dueDate_tm) > 0) {
+                    status += " (Tre)";
+                    overdueBorrows++;
+                }
+            } else {
+                status = "Dang muon";
+                activeBorrows++;
+                if (Utils::CompareDates(current_tm, dueDate_tm) > 0) {
+                    status = "QUA HAN";
+                    overdueBorrows++;
+                }
+            }
+            cout << left << setw(15) << status;
+            cout << endl;
+
+            totalTransactions++;
+        }
+    }
+
+    cout << setfill('-') << setw(135) << "-" << setfill(' ') << endl;
+
+    // Thống kê tổng quan
+    cout << "\n=== TONG QUAN HE THONG ===\n";
+    cout << "Tong so doc gia: " << userCount << "\n";
+    cout << "Tong so giao dich: " << totalTransactions << "\n";
+    cout << "So sach dang muon: " << activeBorrows << "\n";
+    cout << "So sach qua han: " << overdueBorrows << "\n";
+}
+// void BorrowManager::ShowAllUsersTransactionHistory(UserManager& userManager, BookManager& bookManager) {
+//     cout << "\n=== LICH SU GIAO DICH CUA TAT CA DOC GIA ===\n";
+
+//     // Lấy thông tin users từ UserManager
+//     const Person* allUsers = userManager.GetAllUsers();
+//     int userCount = userManager.GetUserCount();
+    
+//     if (userCount == 0) {
+//         cout << "Khong co doc gia nao trong he thong.\n";
+//         return;
+//     }
+
+//     const int DEFAULT_BORROW_DAYS = 14;
+//     char currentDateBuffer[20];
+//     Utils::GetCurrentDate(currentDateBuffer, sizeof(currentDateBuffer));
+//     tm current_tm = Utils::ParseDate(currentDateBuffer);
+
+//     int totalTransactions = 0;
+//     int activeBorrows = 0;
+//     int overdueBorrows = 0;
+
+//     for (int i = 0; i < userCount; i++) {
+//         const Person& person = allUsers[i];
+        
+//         // Tạo User object và tải transaction history
+//         User user;
+//         user.LoadUserByID(to_string(person.getID()));
+        
+//         // Giả sử User có getter cho transactionHistory
+//         // Nếu không có, bạn cần điều chỉnh theo implementation thực tế
+//         const vector<BorrowedItem>& history = user.getTransactionHistory();
+        
+//         if (history.empty()) {
+//             continue; // Bỏ qua user không có giao dịch
+//         }
+
+//         cout << "\n"
+//              << " DOC GIA: " << left << setw(37) << person.getName() << "\n"
+//              << " ID: " << left << setw(40) << person.getID() << "\n";
+
+//         // Header cho bảng
+//         cout << left << setw(10) << "ID Sach"
+//              << left << setw(35) << "Ten Sach"
+//              << left << setw(15) << "Ngay muon"
+//              << left << setw(15) << "Ngay tra"
+//              << left << setw(15) << "Han tra"
+//              << left << setw(15) << "Trang thai"
+//              << endl;
+//         cout << setfill('-') << setw(105) << "-" << setfill(' ') << endl;
+
+//         // Duyệt qua lịch sử của user hiện tại
+//         for (const auto& item : history) {
+//             int bookID = item.getBookID();
+//             string borrowDateStr = item.getBorrowDate();
+//             string returnDateStr = item.getReturnDate();
+//             Book* book = bookManager.GetBookByID(bookID);
+
+//             cout << left << setw(10) << bookID;
+
+//             string bookTitle = (book) ? book->getTitle() : "Sach da bi xoa";
+//             if (bookTitle.length() > 34) {
+//                 bookTitle = bookTitle.substr(0, 31) + "...";
+//             }
+//             cout << left << setw(35) << bookTitle;
+//             cout << left << setw(15) << borrowDateStr;
+            
+//             // Hiển thị ngày trả
+//             cout << left << setw(15) << (item.getIsReturned() ? returnDateStr : "--");
+
+//             // Tính toán hạn trả
+//             tm borrow_tm = Utils::ParseDate(borrowDateStr);
+//             tm dueDate_tm = Utils::AddDays(borrow_tm, DEFAULT_BORROW_DAYS);
+//             string dueDateStr = Utils::FormatDate(dueDate_tm);
+//             cout << left << setw(15) << dueDateStr;
+
+//             // Xác định trạng thái
+//             string status;
+//             if (item.getIsReturned()) {
+//                 status = "Da tra";
+//                 tm return_tm = Utils::ParseDate(returnDateStr);
+//                 if (Utils::CompareDates(return_tm, dueDate_tm) > 0) {
+//                     status += " (Tre)";
+//                     overdueBorrows++;
+//                 }
+//             } else {
+//                 status = "Dang muon";
+//                 activeBorrows++;
+//                 if (Utils::CompareDates(current_tm, dueDate_tm) > 0) {
+//                     status = "QUA HAN";
+//                     overdueBorrows++;
+//                 }
+//             }
+//             cout << left << setw(15) << status;
+//             cout << endl;
+
+//             totalTransactions++;
+//         }
+//         cout << setfill('-') << setw(105) << "-" << setfill(' ') << endl;
+//     }
+
+//     // Thống kê tổng quan
+//     cout << "\n=== TONG QUAN HE THONG ===\n";
+//     cout << "Tong so doc gia: " << userCount << "\n";
+//     cout << "Tong so giao dich: " << totalTransactions << "\n";
+//     cout << "So sach dang muon: " << activeBorrows << "\n";
+//     cout << "So sach qua han: " << overdueBorrows << "\n";
+// }
 // --- 1. LOGIC GHI LOG (Private) ---
 
 void BorrowManager::LogBorrowRecord(int userID, const string &userName,
@@ -136,13 +360,105 @@ void BorrowManager::LogReturnRecord(int userID, const string &userName,
 
 // --- 2. LOGIC GIAO DỊCH (Public) ---
 
+// void BorrowManager::HandleBorrowBook(UserManager& um, BookManager& bm)
+// {
+//     cout << "\n========= XU LY MUON SACH =========\n";
+
+//     int userID = 0, bookID = 0;
+
+//     // --- B1: Nhập ID người dùng ---
+//     cout << "Nhap ID nguoi dung muon sach: ";
+//     if (!(cin >> userID))
+//     {
+//         cout << "Loi: ID nguoi dung khong hop le.\n";
+//         cin.clear();
+//         cin.ignore(100, '\n');
+//         return;
+//     }
+//     cin.ignore(100, '\n');
+
+//     // --- B2: Nhập ID sách ---
+//     cout << "Nhap ID sach can muon: ";
+//     if (!(cin >> bookID))
+//     {
+//         cout << "Loi: ID sach khong hop le.\n";
+//         cin.clear();
+//         cin.ignore(100, '\n');
+//         return;
+//     }
+//     cin.ignore(100, '\n');
+
+//     // --- B3: Tải thông tin người dùng ---
+//     Person *personPtr = um.GetUserByID(userID);
+//     User *user = static_cast<User *>(personPtr);
+
+//     if (user == nullptr)
+//     {
+//         cout << "Loi: Khong tim thay nguoi dung voi ID: " << userID << "\n";
+//         return;
+//     }
+    
+//     // --- B4: Lấy thông tin sách ---
+//     Book *book = bm.GetBookByID(bookID);
+
+//     if (!book)
+//     {
+//         cout << "Loi: Khong tim thay sach voi ID: " << bookID << "\n";
+//         return;
+//     }
+
+//     if (book->getQuantity() <= 0)
+//     {
+//         cout << "Loi: Sach '" << book->getTitle() << "' da het trong kho.\n";
+//         return;
+//     }
+
+//     // --- B5: Xử lý mượn sách ---
+//     if (user->BorrowBook(bookID))
+//     {
+//         // 1. Trừ số lượng sách và lưu file sách
+//         book->setQuantity(book->getQuantity() - 1);
+//         bm.SaveBooksToFile(); // Gọi hàm lưu sách từ BookManager
+
+//         // 2. Lấy ngày mượn hiện tại
+//         char borrowDate[20];
+//         Utils::GetCurrentDate(borrowDate, sizeof(borrowDate));
+
+//         // 3. Lấy thông tin ghi log
+//         string currentUserName = user->getName();
+//         string currentBookTitle = book->getTitle();
+
+//         // 4. Gọi hàm ghi log (private)
+//         LogBorrowRecord(
+//             userID,
+//             currentUserName,
+//             bookID,
+//             currentBookTitle,
+//             borrowDate);
+
+//         cout << "MUON SACH THÀNH CÔNG!\n";
+//         cout << "Sach: '" << book->getTitle() << "'\n";
+//         cout << "Ngay muon: " << borrowDate << "\n";
+//         cout << "So luong con lai: " << book->getQuantity() << "\n";
+        
+//         // 5. Cần lưu lại thông tin User sau khi mượn (để cập nhật BorrowedBooks list)
+//         // Lưu ý: User::BorrowBook có thể đã tự gọi save nếu được thiết kế như vậy,
+//         // nếu không, cần thêm hàm SaveUserByID(userID) vào UserManager và gọi ở đây.
+//         // Tạm thời bỏ qua bước này vì không rõ User.h/UserManager.h
+//     }
+//     else
+//     {
+//         // Lỗi đã được in trong hàm BorrowBook của class User
+//     }
+    
+// }
 void BorrowManager::HandleBorrowBook(UserManager& um, BookManager& bm)
 {
     cout << "\n========= XU LY MUON SACH =========\n";
 
     int userID = 0, bookID = 0;
 
-    // --- B1: Nhập ID người dùng ---
+    // --- Nhập ID người dùng ---
     cout << "Nhap ID nguoi dung muon sach: ";
     if (!(cin >> userID))
     {
@@ -153,7 +469,7 @@ void BorrowManager::HandleBorrowBook(UserManager& um, BookManager& bm)
     }
     cin.ignore(100, '\n');
 
-    // --- B2: Nhập ID sách ---
+    // --- Nhập ID sách ---
     cout << "Nhap ID sach can muon: ";
     if (!(cin >> bookID))
     {
@@ -164,19 +480,21 @@ void BorrowManager::HandleBorrowBook(UserManager& um, BookManager& bm)
     }
     cin.ignore(100, '\n');
 
-    // --- B3: Tải thông tin người dùng ---
-    Person *personPtr = um.GetUserByID(userID);
-    User *user = static_cast<User *>(personPtr);
-
-    if (user == nullptr)
-    {
+    // --- Tải và kiểm tra người dùng ---
+    // FIXED: Tạo user cục bộ thay vì dùng con trỏ
+    User user;
+    user.LoadUserByID(to_string(userID));
+    
+    // Kiểm tra xem user có được tải thành công không
+    if (user.getID() == 0) {
         cout << "Loi: Khong tim thay nguoi dung voi ID: " << userID << "\n";
         return;
     }
 
-    // --- B4: Lấy thông tin sách ---
-    Book *book = bm.GetBookByID(bookID);
+    // cout << "[DEBUG] User loaded: " << user.getName() << ", ID: " << user.getID() << "\n";
 
+    // --- Lấy thông tin sách ---
+    Book *book = bm.GetBookByID(bookID);
     if (!book)
     {
         cout << "Loi: Khong tim thay sach voi ID: " << bookID << "\n";
@@ -189,22 +507,25 @@ void BorrowManager::HandleBorrowBook(UserManager& um, BookManager& bm)
         return;
     }
 
-    // --- B5: Xử lý mượn sách ---
-    if (user->BorrowBook(bookID))
+    // --- Xử lý mượn sách ---
+    cout << "[DEBUG] Before calling BorrowBook\n";
+    if (user.BorrowBook(bookID))
     {
+        cout << "[DEBUG] BorrowBook returned true\n";
+        
         // 1. Trừ số lượng sách và lưu file sách
         book->setQuantity(book->getQuantity() - 1);
-        bm.SaveBooksToFile(); // Gọi hàm lưu sách từ BookManager
+        bm.SaveBooksToFile();
 
         // 2. Lấy ngày mượn hiện tại
         char borrowDate[20];
         Utils::GetCurrentDate(borrowDate, sizeof(borrowDate));
 
         // 3. Lấy thông tin ghi log
-        string currentUserName = user->getName();
+        string currentUserName = user.getName();
         string currentBookTitle = book->getTitle();
 
-        // 4. Gọi hàm ghi log (private)
+        // 4. Gọi hàm ghi log
         LogBorrowRecord(
             userID,
             currentUserName,
@@ -217,14 +538,13 @@ void BorrowManager::HandleBorrowBook(UserManager& um, BookManager& bm)
         cout << "Ngay muon: " << borrowDate << "\n";
         cout << "So luong con lai: " << book->getQuantity() << "\n";
         
-        // 5. Cần lưu lại thông tin User sau khi mượn (để cập nhật BorrowedBooks list)
-        // Lưu ý: User::BorrowBook có thể đã tự gọi save nếu được thiết kế như vậy,
-        // nếu không, cần thêm hàm SaveUserByID(userID) vào UserManager và gọi ở đây.
-        // Tạm thời bỏ qua bước này vì không rõ User.h/UserManager.h
+        // 5. Cập nhật thông tin user trong UserManager
+        // (Nếu cần đồng bộ với danh sách users trong UserManager)
     }
     else
     {
-        // Lỗi đã được in trong hàm BorrowBook của class User
+        cout << "[DEBUG] BorrowBook returned false\n";
+        cout << "Muon sach that bai!\n";
     }
 }
 

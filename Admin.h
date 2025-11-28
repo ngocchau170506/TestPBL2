@@ -250,7 +250,7 @@ void Admin::BorrowBookMenu()
 
             if (user)
                 // Giả định User::ShowBorrowedBooks chấp nhận BookManager
-                user->ShowBorrowedBooks(bookManager); 
+                user->ShowTransactionHistory(bookManager); 
             else
                 cout << "Khong tim thay nguoi dung voi ID: " << userID << endl;
 
@@ -259,7 +259,7 @@ void Admin::BorrowBookMenu()
         else if (choice == 5)
         {
             // Ủy thác hiển thị lịch sử mượn thô cho BorrowManager
-            borrowManager.ShowHistoryBorrow();
+            borrowManager.ShowAllUsersTransactionHistory(userManager, bookManager);
             AskReturnToMenu();
         }
         else if (choice == 6)

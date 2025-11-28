@@ -39,6 +39,9 @@ public:
 
     int GetUserCount() const { return userCount; }
     Person* GetUserByID(int userID);
+    const Person* GetAllUsers() const { return users; }
+
+    
 };
 string UserManager::GenerateNextUserID()
 {
