@@ -11,6 +11,7 @@ class BookManager
 private:
     Book books[100];
     int bookCount;
+    int nextAvailableID;
     
     char filePath[100];
     bool IsBookIDExist(int id);
@@ -19,6 +20,7 @@ private:
     char toLower(char c);
     void trim(char* str);
     bool containsIgnoreCase(const char* text, const char* keyword);
+    string GenerateNextBookID();
 public:
     BookManager();
 
@@ -37,6 +39,18 @@ public:
     const Book* GetBookByID(int id) const; 
     Book* GetBookByID(int id);
 };
+
+string BookManager::GenerateNextBookID()
+{
+    int nextIDNumber = bookCount + 1;
+    int newID = nextAvailableID;
+    
+    stringstream ss;
+    ss << setfill('0') << newID;
+    nextAvailableID++;
+    
+    return ss.str();
+}    
 
 void BookManager::ShowStockReport() const
 {
@@ -174,22 +188,11 @@ void BookManager::AddBook()
     do
     {
         cout << "\n--- THEM SACH MOI ---\n";
-        int id;
-        do
-        {
-            cout << "Nhap ID sach: ";
-            while (!(cin >> id))
-            {
-                cout << "ID khong hop le. Nhap lai: ";
-                cin.clear();
-                cin.ignore(100, '\n');
-            }
-            if (IsBookIDExist(id))
-            {
-                cout << "Loi: ID " << id << " da ton tai! Vui long nhap ID khac.\n";
-            }
-        } while (IsBookIDExist(id));
-
+        string newIDStr = GenerateNextBookID();
+        int id = Utils::StringToIntManual(newIDStr.c_str());
+        
+        cout << "ID sach tu dong: " << newIDStr << "\n";
+        
         cin.ignore();
         books[bookCount].setID(id);
         books[bookCount].InputBook();
@@ -197,7 +200,6 @@ void BookManager::AddBook()
         bookCount++;
 
         SaveBooksToFile();
-        cout << "Them sach thanh cong! (Tong so: " << bookCount << ")\n";
 
         cout << "Ban co muon them sach khac khong? (Y/N): ";
         cin >> choice;
@@ -438,21 +440,21 @@ void BookManager::UpdateBookByID(int id)
     char input[200];
     
     // 1. Cập nhật Tên sách (Title)
-    cout << "Nhap Ten sach moi (Bo qua de giu nguyen - Hien tai: " << book->getTitle() << "): ";
+    cout << "Nhap Ten sach moi: ";
     cin.getline(input, sizeof(input));
     if (input[0] != '\0') {
         book->setTitle(input);
     }
     
     // 2. Cập nhật Tác giả (Author)
-    cout << "Nhap Tac gia moi (Bo qua de giu nguyen - Hien tai: " << book->getAuthor() << "): ";
+    cout << "Nhap Tac gia moi: ";
     cin.getline(input, sizeof(input));
     if (input[0] != '\0') {
         book->setAuthor(input);
     }
     
   
-    cout << "Nhap Nam xuat ban moi (Bo qua de giu nguyen - Hien tai: " << book->getYear() << "): ";
+    cout << "Nhap Nam xuat ban moi: ";
     cin.getline(input, sizeof(input));
     if (input[0] != '\0') {
         int newYear = Utils::CharArrayToIntManual(input);
@@ -464,7 +466,7 @@ void BookManager::UpdateBookByID(int id)
     }
     
     // 4. Cập nhật Thể loại (Category)
-    cout << "Nhap The loai moi (Bo qua de giu nguyen - Hien tai: " << book->getCategory() << "): ";
+    cout << "Nhap The loai moi: ";
     cin.getline(input, sizeof(input));
     if (input[0] != '\0') {
         book->setCategory(input);

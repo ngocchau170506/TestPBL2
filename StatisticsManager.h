@@ -439,15 +439,19 @@ void StatisticsManager::ThongKeMuonTra() {
     switch(choice) {
         case 1:
             borrowManager.ShowBorrowRecords();
+            Utils::AskReturnToMenu();
             break;
         case 2:
             borrowManager.ShowHistoryBorrow();
+            Utils::AskReturnToMenu();
             break;
         case 3:
             borrowManager.ShowHistoryReturn();
+            Utils::AskReturnToMenu();
             break;
         case 4:
             borrowManager.ShowAllUsersTransactionHistory(userManager, bookManager);
+            Utils::AskReturnToMenu();
             break;
         default:
             cout << "Lua chon khong hop le!\n";

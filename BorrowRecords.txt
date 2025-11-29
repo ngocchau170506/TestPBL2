@@ -1,81 +1,27 @@
 === THONG TIN MUON SACH ===
-Thoi gian ghi nhan: 26/11/2025 12:22:47
-ID nguoi dung: 12
-Ten nguoi dung: Nguyen Thi Ngoc Chau
-ID sach: 132
-Ten sach: Cho xin mot ve di tuoi tho
-Ngay muon: 2025-11-26
+Thoi gian ghi nhan: 29/11/2025 15:01:04
+ID nguoi dung: 2012
+Ten nguoi dung: Le Minh Hoang
+ID sach: 139
+Ten sach: Nhat ky cua Chau
+Ngay muon: 29/11/2025
 ----------------------------------------
 
 === THONG TIN MUON SACH ===
-Thoi gian ghi nhan: 26/11/2025 12:47:08
-ID nguoi dung: 12
-Ten nguoi dung: Nguyen Thi Ngoc Chau
+Thoi gian ghi nhan: 29/11/2025 15:19:41
+ID nguoi dung: 2014
+Ten nguoi dung: Tran Anh Tuan
+ID sach: 139
+Ten sach: Nhat ky cua Chau
+Ngay muon: 29/11/2025
+----------------------------------------
+
+=== THONG TIN MUON SACH ===
+Thoi gian ghi nhan: 29/11/2025 15:20:51
+ID nguoi dung: 2015
+Ten nguoi dung: Vo Kim Anh
 ID sach: 138
 Ten sach: Mua lac
-Ngay muon: 26/11/2025
-----------------------------------------
-
-=== THONG TIN MUON SACH ===
-Thoi gian ghi nhan: 27/11/2025 12:12:46
-ID nguoi dung: 12
-Ten nguoi dung: Nguyen Thi Ngoc Chau
-ID sach: 124
-Ten sach: Mat biec
-Ngay muon: 27/11/2025
-----------------------------------------
-
-=== THONG TIN MUON SACH ===
-Thoi gian ghi nhan: 27/11/2025 12:13:09
-ID nguoi dung: 12
-Ten nguoi dung: Nguyen Thi Ngoc Chau
-ID sach: 125
-Ten sach: Toi thay hoa vang tren co xanh
-Ngay muon: 27/11/2025
-----------------------------------------
-
-=== THONG TIN MUON SACH ===
-Thoi gian ghi nhan: 27/11/2025 12:13:24
-ID nguoi dung: 12
-Ten nguoi dung: Nguyen Thi Ngoc Chau
-ID sach: 126
-Ten sach: Co gai den tu hom qua
-Ngay muon: 27/11/2025
-----------------------------------------
-
-=== THONG TIN MUON SACH ===
-Thoi gian ghi nhan: 27/11/2025 22:37:10
-ID nguoi dung: 4
-Ten nguoi dung: Chau
-ID sach: 124
-Ten sach: Mat biec
-Ngay muon: 27/11/2025
-----------------------------------------
-
-=== THONG TIN MUON SACH ===
-Thoi gian ghi nhan: 28/11/2025 09:59:04
-ID nguoi dung: 4
-Ten nguoi dung: CHauuu
-ID sach: 127
-Ten sach: Ngoi khoc tren cay
-Ngay muon: 28/11/2025
-----------------------------------------
-
-=== THONG TIN MUON SACH ===
-Thoi gian ghi nhan: 28/11/2025 11:00:15
-ID nguoi dung: 1
-Ten nguoi dung: Chau
-ID sach: 124
-Ten sach: Mat biec
-Ngay muon: 28/11/2025
-----------------------------------------
-
-=== THONG TIN MUON SACH ===
-Thoi gian ghi nhan: 28/11/2025 11:59:58
-ID nguoi dung: 4
-Ten nguoi dung: CHauuu
-ID sach: 124
-Ten sach: Mat biec
-Ngay muon: 28/11/2025
+Ngay muon: 29/11/2025
 ----------------------------------------
 

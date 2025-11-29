@@ -47,8 +47,9 @@ public:
     void InputBook();
     void WriteToFile(ostream& out) const;
     void ReadToFile(istream& in);
+    
 };
-
+    
 int Book::getYear() const
 {
     return year;

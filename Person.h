@@ -1,5 +1,7 @@
 #pragma once
 #include <iostream>
+#include <sstream>
+#include <cstring>
 
 using namespace std;
 
@@ -42,11 +44,76 @@ public:
     void Update();
     void UpdateByUser();
     void InputAccountDetails();
+    string getLastName() const;
+    void InputUserDetails();
 
     friend ostream& operator<<(ostream& out, const Person& p);
     friend istream& operator>>(istream& in, Person& p);
 };
 
+string Person::getLastName() const {
+    string fullName = this->getName();
+    stringstream ss(fullName);
+    string namePart;
+    string lastName = "";
+
+    // Duyệt qua từng từ trong tên và lấy từ cuối cùng
+    while (getline(ss, namePart, ' ')) {
+        // Bỏ qua các chuỗi trống do nhiều khoảng trắng
+        if (!namePart.empty()) {
+            lastName = namePart; 
+        }
+    }
+    return lastName;
+}
+
+void Person::InputUserDetails()
+{
+    char tempStr[100];
+    cout << "------------------------------------------\n";
+
+    // 1. Nhập Tên
+    do {
+        cout << "Nhap Ten doc gia (VD: Nguyen Van A): ";
+        cin.getline(tempStr, sizeof(tempStr));
+        if (strlen(tempStr) == 0) {
+            cout << "Ten khong duoc de trong.\n";
+        }
+    } while (strlen(tempStr) == 0);
+    setName(tempStr);
+
+    // 2. Nhập Ngày sinh
+    do {
+        cout << "Nhap Ngay sinh (DD/MM/YYYY): ";
+        cin.getline(tempStr, sizeof(tempStr));
+        if (strlen(tempStr) == 0) {
+            cout << "Ngay sinh khong duoc de trong.\n";
+        }
+    } while (strlen(tempStr) == 0);
+    setDate(tempStr);
+
+    // 3. Nhập Số điện thoại
+    do {
+        cout << "Nhap So dien thoai: ";
+        cin.getline(tempStr, sizeof(tempStr));
+        if (strlen(tempStr) == 0) {
+            cout << "So dien thoai khong duoc de trong.\n";
+        }
+    } while (strlen(tempStr) == 0);
+    setPhone(tempStr);
+
+    // 4. Nhập Email
+    do {
+        cout << "Nhap Email: ";
+        cin.getline(tempStr, sizeof(tempStr));
+        if (strlen(tempStr) == 0) {
+            cout << "Email khong duoc de trong.\n";
+        }
+    } while (strlen(tempStr) == 0);
+    setEmail(tempStr);
+    
+    cout << "------------------------------------------\n";
+}
 void Person::CopyStringManual(char* dest, const char* src, size_t dest_size) 
 {
     size_t i = 0;

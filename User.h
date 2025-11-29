@@ -45,7 +45,10 @@ public:
     
     void ShowTransactionHistory(BookManager& bookManager);
     void Menu(UserManager &manager, BookManager &bm);
+    
+    
 };
+
 
 const int MAX_STREAM_SIZE_MANUAL = 100;
 
@@ -73,7 +76,7 @@ void User::SaveTransactionHistory() const
 {
     if (getID() == 0) return;
 
-    string filename = "user_" + to_string(getID()) + "_history.txt";
+    string filename = "user_history_" + to_string(getID()) + ".txt";
     ofstream outFile(filename);
 
     if (!outFile.is_open())
@@ -102,7 +105,7 @@ void User::LoadTransactionHistory()
         return;
     }
 
-    string filename = "user_" + to_string(getID()) + "_history.txt";
+    string filename = "user_history_" + to_string(getID()) + ".txt";
     ifstream inFile(filename);
 
     if (!inFile.is_open())

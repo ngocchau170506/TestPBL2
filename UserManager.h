@@ -257,6 +257,34 @@ void UserManager::SaveUsersToFile() const
 
 //     } while (choice == 'Y');
 // }
+// void UserManager::AddUser()
+// {
+//     char choice;
+//     do {
+//         cout << "\n--- THEM NGUOI DUNG MOI ---\n";
+
+//         string newIDStr = GenerateNextUserID();
+//         int tempID = Utils::StringToIntManual(newIDStr.c_str()); 
+
+//         cout << "ID nguoi dung moi: " << newIDStr << "\n";
+        
+//         users[userCount].setID(tempID);
+//         users[userCount].InputAccountDetails();
+//         users[userCount].Show();
+
+//         userCount++;
+//         cout << "Them nguoi dung thanh cong! (Tong so: " << userCount << ")\n";
+//         SaveUsersToFile(); 
+
+//         cout << "Ban co muon them nguoi dung khac khong? (Y/N): ";
+//         cin >> choice;
+//         cin.ignore(100, '\n');
+//         choice = toupper(choice);
+
+//     } while (choice == 'Y');
+// }
+// UserManager.cpp
+
 void UserManager::AddUser()
 {
     char choice;
@@ -268,12 +296,27 @@ void UserManager::AddUser()
 
         cout << "ID nguoi dung moi: " << newIDStr << "\n";
         
+        // --- BƯỚC 1: SET ID VÀ NHẬP THÔNG TIN CÁ NHÂN (Trừ mật khẩu) ---
         users[userCount].setID(tempID);
-        users[userCount].InputAccountDetails();
+        
+        // Cần hàm mới chỉ nhập Tên, DOB, Phone, Email
+        // Giả sử ta có hàm User::InputUserDetails()
+        users[userCount].InputUserDetails(); 
+        
+        // --- BƯỚC 2: TẠO MẬT KHẨU TỰ ĐỘNG ---
+        // Lấy tên (chỉ lấy tên cuối, vd: Chau, Hoang, Trang) và DOB (12/07/2006)
+        string lastName = users[userCount].getLastName(); // Cần hàm getLastName()
+        string dob = users[userCount].getDate();         // Lấy ngày sinh DD/MM/YYYY
+
+        string newPassword = Utils::GeneratePassword(lastName, dob); 
+        users[userCount].setPassword(newPassword.c_str());
+
+        // HIỂN THỊ THÔNG TIN ĐỂ ADMIN XÁC NHẬN
+        cout << "MAT KHAU: " << newPassword << "\n"; // Hiển thị mật khẩu cho admin
         users[userCount].Show();
 
         userCount++;
-        cout << "Them nguoi dung thanh cong! (Tong so: " << userCount << ")\n";
+        cout << "Them nguoi dung thanh cong!\n";
         SaveUsersToFile(); 
 
         cout << "Ban co muon them nguoi dung khac khong? (Y/N): ";

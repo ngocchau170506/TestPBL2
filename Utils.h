@@ -69,7 +69,23 @@ public:
         
         return totalDays;
     }
+    static string GeneratePassword(const string& lastName, const string& dob);
 };
+string Utils::GeneratePassword(const string& lastName, const string& dob) {
+    // 1. Chuẩn hóa tên (chuyển thường)
+
+
+    // 2. Chuẩn hóa ngày sinh (DD/MM/YYYY -> DDMMYYYY)
+    string cleanDOB = "";
+    for (char c : dob) {
+        if (c != '/') {
+            cleanDOB += c;
+        }
+    }
+
+    // 3. Nối chuỗi
+    return lastName + cleanDOB;
+}
 bool Utils::AskReturnToMenu()
 {
     char choice;
